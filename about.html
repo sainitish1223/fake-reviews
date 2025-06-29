@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Review Detection | About</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis  href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 2025 Color Palette */
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #22d3ee 100%);
+            --accent-gradient: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #d946ef 100%);
+            
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #0ea5e9;
+            --accent-color: #f43f5e;
+            
+            --background-color: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: rgba(148, 163, 184, 0.1);
+            
+            --text-color: #0f172a;
+            --text-light: #64748b;
+            --text-xlight: #94a3b8;
+            
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            
+            --border-radius-sm: 0.5rem;
+            --border-radius: 1rem;
+            --border-radius-lg: 1.5rem;
+            --border-radius-xl: 2rem;
+            
+            --box-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --box-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --font-primary: 'Outfit', sans-serif;
+            --font-secondary: 'Inter', sans-serif;
+        }
+        
+        .dark-mode {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #22d3ee 100%);
+            
+            --background-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: rgba(148, 163, 184, 0.1);
+            
+            --text-color: #f8fafc;
+            --text-light: #cbd5e1;
+            --text-xlight: #94a3b8;
+            
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: var(--font-secondary);
+            line-height: 1.6;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+        }
+        
+        /* Neomorphic Card */
+        .neo-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.05),
+                        -8px -8px 16px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            padding: 1rem 0;
+        }
+        
+        .navbar.scrolled {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--box-shadow);
+            padding: 0.75rem 0;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo-icon {
+            margin-right: 0.5rem;
+            font-size: 1.75rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-color);
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            transform: rotate(15deg);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        /* Page Header */
+        .page-header {
+            padding: 10rem 0 6rem;
+            background: linear-gradient(to bottom, rgba(99, 102, 241, 0.05), rgba(14, 165, 233, 0.05));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            opacity: 0.05;
+            filter: blur(100px);
+            z-index: 0;
+        }
+        
+        .page-header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .page-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 2rem;
+        }
+        
+        .page-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-description {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* About Section */
+        .about-section {
+            padding: 6rem 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+        }
+        
+        .about-content {
+            max-width: 600px;
+        }
+        
+        .about-description {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .about-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--border-radius-sm);
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-text h4 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .feature-text p {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .about-image {
+            position: relative;
+        }
+        
+        .about-img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow-lg);
+            transform: perspective(1000px) rotateY(5deg) rotateX(-5deg);
+            transition: var(--transition);
+        }
+        
+        .about-img:hover {
+            transform: perspective(1000px) rotateY(0) rotateX(0);
+        }
+        
+        .floating-badge {
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .badge-1 {
+            top: 10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+        
+        .badge-2 {
+            bottom: 10%;
+            right: -5%;
+            animation-delay: 2s;
+        }
+        
+        .badge-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+        
+        .badge-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* Architecture Section */
+        .architecture-section {
+            padding: 6rem 0;
+            background: linear-gradient(to bottom, rgba(99, 102, 241, 0.05), rgba(14, 165, 233, 0.05));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .architecture-section::before {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            opacity: 0.05;
+            filter: blur(100px);
+            z-index: 0;
+        }
+        
+        .architecture-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        
+        .architecture-diagram {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 3rem;
+            box-shadow: var(--box-shadow-lg);
+            margin-bottom: 4rem;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .architecture-diagram::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+            z-index: -1;
+        }
+        
+        .diagram-svg {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .architecture-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .step-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+        }
+        
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .step-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .step-description {
+            color: var(--text-light);
+        }
+        
+        /* Performance Section */
+        .performance-section {
+            padding: 6rem 0;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: var(--text-light);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 4rem;
+            border: 1px solid var(--card-border);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-title {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-color-1 {
+            background: var(--primary-gradient);
+        }
+        
+        .legend-color-2 {
+            background: var(--secondary-gradient);
+        }
+        
+        .legend-text {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .chart-svg {
+            width: 100%;
+            height: 300px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+        }
+        
+        .footer-brand {
+            max-width: 300px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .footer-links h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 0.5rem;
+        }
+        
+        .footer-bottom {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-bottom-link {
+            color: var(--text-light);
+        }
+        
+        .footer-bottom-link:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 1s forwards;
+        }
+        
+        .animate-fadeInRight {
+            animation: fadeInRight 1s forwards;
+        }
+        
+        .animate-fadeInLeft {
+            animation: fadeInLeft 1s forwards;
+        }
+        
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .page-title {
+                font-size: 3rem;
+            }
+            
+            .section-title {
+                font-size: 2.25rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .about-image {
+                order: -1;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .footer-brand {
+                grid-column: span 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--glass-bg);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transform: translateX(100%);
+                transition: var(--transition);
+                z-index: 1;
+            }
+            
+            .nav-links.show {
+                transform: translateX(0);
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                z-index: 2;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .about-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .architecture-steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .footer-brand {
+                grid-column: span 1;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .footer-bottom-links {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-brain logo-icon"></i>
+                <span class="logo-text">Fake Review Detection</span>
+            </a>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/about" class="nav-link active">About</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <div class="page-header-content">
+                <div class="page-subtitle">About Our Technology</div>
+                <h1 class="page-title">SentimentMind AI</h1>
+                <p class="page-description">Discover the advanced technology behind our Multi-Interactive Attention Network Architecture (MIANA) for review analysis and classification.</p>
+            </div>
+        </div>
+    </header>
+    
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content animate-fadeInRight">
+                    <h2 class="section-title">What is SentimentMind AI?</h2>
+                    <p class="about-description">SentimentMind AI is powered by our proprietary Multi-Interactive Attention Network Architecture (MIANA), a state-of-the-art deep learning model designed specifically for analyzing and classifying product reviews with unprecedented accuracy.</p>
+                    <p class="about-description">Our model goes beyond simple positive/negative sentiment analysis by categorizing reviews into multiple classes, identifying specific aspects of products being discussed, and providing detailed insights into customer sentiment.
+
+Our advanced neural architecture enables businesses to gain deeper understanding of customer feedback, identify trends, and make data-driven decisions to improve their products and services.
+
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Deep Learning</h4>
+                                <p>Utilizes advanced neural networks to understand context and nuance in language.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="about-feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Real-time Analysis</h4>
+                                <p>Processes reviews in milliseconds for instant insights.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="about-feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Multi-class Classification</h4>
+                                <p>Categorizes reviews into multiple classes beyond simple sentiment.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="about-feature">
+                            <div class="feature-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="feature-text">
+                                <h4>Contextual Understanding</h4>
+                                <p>Comprehends the relationships between different parts of text.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-image animate-fadeInLeft">
+                    <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1965&q=80" alt="AI Technology" class="about-img">
+                    
+                    <div class="floating-badge badge-1">
+                        <div class="badge-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="badge-text">
+                            AI Powered
+                        </div>
+                    </div>
+                    
+                    <div class="floating-badge badge-2">
+                        <div class="badge-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="badge-text">
+                            2025
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Architecture Section -->
+    <section class="architecture-section">
+        <div class="container">
+            <div class="architecture-content">
+                <h2 class="section-title">Model Architecture</h2>
+                <p class="about-description">The SentimentMind AI architecture combines several advanced deep learning techniques to achieve superior performance in review analysis.</p>
+            </div>
+            
+            <div class="architecture-diagram">
+                <svg class="diagram-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Input Layer -->
+                    <rect x="50" y="150" width="100" height="100" rx="10" fill="url(#primaryGradient)" opacity="0.8"/>
+                    <text x="100" y="200" text-anchor="middle" fill="white" font-weight="bold">Input Layer</text>
+                    
+                    <!-- Embedding Layer -->
+                    <rect x="200" y="150" width="100" height="100" rx="10" fill="url(#primaryGradient)" opacity="0.8"/>
+                    <text x="250" y="200" text-anchor="middle" fill="white" font-weight="bold">Embedding</text>
+                    
+                    <!-- LSTM Layers -->
+                    <rect x="350" y="100" width="100" height="80" rx="10" fill="url(#secondaryGradient)" opacity="0.8"/>
+                    <text x="400" y="140" text-anchor="middle" fill="white" font-weight="bold">LSTM 1</text>
+                    
+                    <rect x="350" y="220" width="100" height="80" rx="10" fill="url(#secondaryGradient)" opacity="0.8"/>
+                    <text x="400" y="260" text-anchor="middle" fill="white" font-weight="bold">LSTM 2</text>
+                    
+                    <!-- Attention Layer -->
+                    <rect x="500" y="150" width="100" height="100" rx="10" fill="url(#accentGradient)" opacity="0.8"/>
+                    <text x="550" y="185" text-anchor="middle" fill="white" font-weight="bold">Multi-head</text>
+                    <text x="550" y="205" text-anchor="middle" fill="white" font-weight="bold">Attention</text>
+                    
+                    <!-- Output Layer -->
+                    <rect x="650" y="150" width="100" height="100" rx="10" fill="url(#primaryGradient)" opacity="0.8"/>
+                    <text x="700" y="200" text-anchor="middle" fill="white" font-weight="bold">Output</text>
+                    
+                    <!-- Connections -->
+                    <line x1="150" y1="200" x2="200" y2="200" stroke="#333" stroke-width="3"/>
+                    <line x1="300" y1="200" x2="350" y2="140" stroke="#333" stroke-width="3"/>
+                    <line x1="300" y1="200" x2="350" y2="260" stroke="#333" stroke-width="3"/>
+                    <line x1="450" y1="140" x2="500" y2="200" stroke="#333" stroke-width="3"/>
+                    <line x1="450" y1="260" x2="500" y2="200" stroke="#333" stroke-width="3"/>
+                    <line x1="600" y1="200" x2="650" y2="200" stroke="#333" stroke-width="3"/>
+                    
+                    <!-- Gradients -->
+                    <defs>
+                        <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#6366f1" />
+                            <stop offset="50%" stop-color="#8b5cf6" />
+                            <stop offset="100%" stop-color="#d946ef" />
+                        </linearGradient>
+                        
+                        <linearGradient id="secondaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0ea5e9" />
+                            <stop offset="50%" stop-color="#06b6d4" />
+                            <stop offset="100%" stop-color="#22d3ee" />
+                        </linearGradient>
+                        
+                        <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f43f5e" />
+                            <stop offset="50%" stop-color="#ec4899" />
+                            <stop offset="100%" stop-color="#d946ef" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            
+            <div class="architecture-steps">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Text Embedding</h3>
+                    <p class="step-description">The input text is tokenized and converted into dense vector representations using word embeddings, capturing semantic relationships between words.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">LSTM Processing</h3>
+                    <p class="step-description">Bidirectional LSTM layers process the embedded text, capturing contextual information and long-range dependencies in the review.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Interactive Attention</h3>
+                    <p class="step-description">The UserProductInteractionLayer applies multi-head attention to model the relationships between different parts of the text and extract key features.</p>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Classification</h3>
+                    <p class="step-description">The final layer produces probability distributions across multiple categories, providing comprehensive analysis of the review.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Performance Section -->
+    <section class="performance-section">
+        <div class="container">
+            <h2 class="section-title">Model Performance</h2>
+            <p class="about-description">Our SentimentMind AI model has been trained and evaluated on a large dataset of product reviews. Here are the key performance metrics:</p>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="metric-value">{{ "{:.1%}".format(metrics.training_accuracy) }}</div>
+                    <div class="metric-label">Training Accuracy</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-value">{{ "{:.1%}".format(metrics.validation_accuracy) }}</div>
+                    <div class="metric-label">Validation Accuracy</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                    <div class="metric-value">{{ "{:.4f}".format(metrics.training_loss) }}</div>
+                    <div class="metric-label">Training Loss</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="metric-value">{{ "{:.4f}".format(metrics.validation_loss) }}</div>
+                    <div class="metric-label">Validation Loss</div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">Training Progress</h3>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-color-1"></div>
+                            <div class="legend-text">Training Accuracy</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-color-2"></div>
+                            <div class="legend-text">Validation Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <svg class="chart-svg" viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Chart background -->
+                    <rect x="50" y="50" width="700" height="200" fill="none" stroke="var(--card-border)" stroke-width="1"/>
+                    
+                    <!-- Grid lines -->
+                    <line x1="50" y1="90" x2="750" y2="90" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="50" y1="130" x2="750" y2="130" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="50" y1="170" x2="750" y2="170" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="50" y1="210" x2="750" y2="210" stroke="var(--card-border)" stroke-width="1" stroke-dasharray="5,5"/>
+                    
+                    <!-- Y-axis labels -->
+                    <text x="40" y="50" text-anchor="end" fill="var(--text-light)">100%</text>
+                    <text x="40" y="90" text-anchor="end" fill="var(--text-light)">90%</text>
+                    <text x="40" y="130" text-anchor="end" fill="var(--text-light)">80%</text>
+                    <text x="40" y="170" text-anchor="end" fill="var(--text-light)">70%</text>
+                    <text x="40" y="210" text-anchor="end" fill="var(--text-light)">60%</text>
+                    <text x="40" y="250" text-anchor="end" fill="var(--text-light)">50%</text>
+                    
+                    <!-- X-axis labels -->
+                    <text x="50" y="270" text-anchor="middle" fill="var(--text-light)">1</text>
+                    <text x="190" y="270" text-anchor="middle" fill="var(--text-light)">2</text>
+                    <text x="330" y="270" text-anchor="middle" fill="var(--text-light)">3</text>
+                    <text x="470" y="270" text-anchor="middle" fill="var(--text-light)">4</text>
+                    <text x="610" y="270" text-anchor="middle" fill="var(--text-light)">5</text>
+                    <text x="750" y="270" text-anchor="middle" fill="var(--text-light)">Epochs</text>
+                    
+                    <!-- Training accuracy line -->
+                    <path d="M50,170 L190,90 L330,67 L470,63 L610,54" fill="none" stroke="url(#primaryGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    
+                    <!-- Training accuracy points -->
+                    <circle cx="50" cy="170" r="5" fill="url(#primaryGradient)"/>
+                    <circle cx="190" cy="90" r="5" fill="url(#primaryGradient)"/>
+                    <circle cx="330" cy="67" r="5" fill="url(#primaryGradient)"/>
+                    <circle cx="470" cy="63" r="5" fill="url(#primaryGradient)"/>
+                    <circle cx="610" cy="54" r="5" fill="url(#primaryGradient)"/>
+                    
+                    <!-- Validation accuracy line -->
+                    <path d="M50,74 L190,61 L330,56 L470,57 L610,60" fill="none" stroke="url(#secondaryGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5,5"/>
+                    
+                    <!-- Validation accuracy points -->
+                    <circle cx="50" cy="74" r="5" fill="url(#secondaryGradient)"/>
+                    <circle cx="190" cy="61" r="5" fill="url(#secondaryGradient)"/>
+                    <circle cx="330" cy="56" r="5" fill="url(#secondaryGradient)"/>
+                    <circle cx="470" cy="57" r="5" fill="url(#secondaryGradient)"/>
+                    <circle cx="610" cy="60" r="5" fill="url(#secondaryGradient)"/>
+                </svg>
+            </div>
+            
+            <p class="about-description">The model was trained for {{ metrics.epochs }} epochs, with each epoch processing the entire training dataset. The training process showed consistent improvement in both accuracy and loss metrics, indicating effective learning without overfitting.</p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">
+                        <i class="fas fa-brain logo-icon"></i>
+                        <span class="logo-text">SentimentMind AI</span>
+                    </a>
+                    <p class="footer-description">Harness the power of AI to analyze and categorize product reviews with our advanced Multi-Interactive Attention Network Architecture.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="/about">Model Architecture</a></li>
+                        <li><a href="/about">Performance Metrics</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    &copy; 2025 SentimentMind AI. All rights reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                    <a href="#" class="footer-bottom-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+            
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('show');
+                
+                if (navLinks.classList.contains('show')) {
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+            
+            // Theme Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+                
+                if (body.classList.contains('dark-mode')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Animate elements on scroll
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.step-card, .metric-card, .chart-container');
+                
+                elements.forEach((element, index) => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementPosition < windowHeight * 0.8) {
+                        element.classList.add('animate-fadeInUp');
+                        element.style.animationDelay = (index * 0.1) + 's';
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Run once on page load
+        });
+    </script>
+</body>
+</html>
+
