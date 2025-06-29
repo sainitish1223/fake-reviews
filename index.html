@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Review Detection | Advanced Review Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 2025 Color Palette */
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #22d3ee 100%);
+            --accent-gradient: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #d946ef 100%);
+            
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #0ea5e9;
+            --accent-color: #f43f5e;
+            
+            --background-color: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: rgba(148, 163, 184, 0.1);
+            
+            --text-color: #0f172a;
+            --text-light: #64748b;
+            --text-xlight: #94a3b8;
+            
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            
+            --border-radius-sm: 0.5rem;
+            --border-radius: 1rem;
+            --border-radius-lg: 1.5rem;
+            --border-radius-xl: 2rem;
+            
+            --box-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+            --box-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            
+            --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --font-primary: 'Outfit', sans-serif;
+            --font-secondary: 'Inter', sans-serif;
+        }
+        
+        .dark-mode {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --secondary-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #22d3ee 100%);
+            
+            --background-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: rgba(148, 163, 184, 0.1);
+            
+            --text-color: #f8fafc;
+            --text-light: #cbd5e1;
+            --text-xlight: #94a3b8;
+            
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: var(--font-secondary);
+            line-height: 1.6;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+        }
+        
+        /* Neomorphic Card */
+        .neo-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.05),
+                        -8px -8px 16px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            padding: 1rem 0;
+        }
+        
+        .navbar.scrolled {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--box-shadow);
+            padding: 0.75rem 0;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo-icon {
+            margin-right: 0.5rem;
+            font-size: 1.75rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-color);
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: var(--transition);
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            transform: rotate(15deg);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 8rem 0 4rem;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            opacity: 0.1;
+            filter: blur(100px);
+            z-index: -1;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            opacity: 0.1;
+            filter: blur(100px);
+            z-index: -1;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-text {
+            max-width: 600px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .hero-subtitle span {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-description {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(99, 102, 241, 0.05);
+            border-color: var(--primary-color);
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .hero-image {
+            position: relative;
+        }
+        
+        .hero-img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--box-shadow-lg);
+            transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+            transition: var(--transition);
+        }
+        
+        .hero-img:hover {
+            transform: perspective(1000px) rotateY(0) rotateX(0);
+        }
+        
+        .floating-card {
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            box-shadow: var(--glass-shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-card-1 {
+            top: 10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-card-2 {
+            bottom: 10%;
+            right: -5%;
+            animation-delay: 2s;
+        }
+        
+        .floating-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+        
+        .floating-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            opacity: 0.05;
+            filter: blur(100px);
+            z-index: -1;
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 2rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-description {
+            font-size: 1.125rem;
+            color: var(--text-light);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--box-shadow-lg);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--border-radius);
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .feature-description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color);
+            font-weight: 600;
+            gap: 0.5rem;
+        }
+        
+        .feature-link:hover {
+            gap: 0.75rem;
+        }
+        
+        /* Analyzer Section */
+        .analyzer {
+            padding: 6rem 0;
+            position: relative;
+        }
+        
+        .analyzer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(14, 165, 233, 0.05) 100%);
+            clip-path: polygon(0 20%, 100% 0, 100% 80%, 0 100%);
+            z-index: -1;
+        }
+        
+        .analyzer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .analyzer-content {
+            max-width: 500px;
+        }
+        
+        .analyzer-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .analyzer-description {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+        
+        .analyzer-form {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--box-shadow-lg);
+            border: 1px solid var(--card-border);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-family: var(--font-secondary);
+            font-size: 1rem;
+            transition: var(--transition);
+            resize: vertical;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .error-message {
+            display: none;
+            color: var(--danger-color);
+            background-color: rgba(239, 68, 68, 0.1);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .results {
+            display: none;
+            margin-top: 2rem;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .results-title {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .results-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .btn-icon:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .prediction-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .prediction-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-lg);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+        
+        .prediction-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .prediction-label {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-color);
+        }
+        
+        .prediction-percentage {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+        
+        .prediction-bar-container {
+            height: 10px;
+            background-color: rgba(99, 102, 241, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .prediction-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 5px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .prediction-description {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-top: 1rem;
+        }
+        
+        /* Call to Action */
+        .cta {
+            padding: 8rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        .cta-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta-title {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .cta-description {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 4rem;
+        }
+        
+        .footer-brand {
+            max-width: 300px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-description {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .social-link:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .footer-links h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 0.5rem;
+        }
+        
+        .footer-bottom {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+        
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .footer-bottom-link {
+            color: var(--text-light);
+        }
+        
+        .footer-bottom-link:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 1s forwards;
+        }
+        
+        .animate-fadeInRight {
+            animation: fadeInRight 1s forwards;
+        }
+        
+        .animate-fadeInLeft {
+            animation: fadeInLeft 1s forwards;
+        }
+        
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+        
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .cta-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .hero-image {
+                order: -1;
+            }
+            
+            .analyzer-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .footer-brand {
+                grid-column: span 2;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--glass-bg);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 2rem;
+                transform: translateX(100%);
+                transition: var(--transition);
+                z-index: 1;
+            }
+            
+            .nav-links.show {
+                transform: translateX(0);
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+                z-index: 2;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .cta-title {
+                font-size: 2rem;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .footer-brand {
+                grid-column: span 1;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .footer-bottom-links {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-cta {
+                flex-direction: column;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-brain logo-icon"></i>
+                <span class="logo-text">Fake Review Detection</span>
+            </a>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" class="nav-link active">Home</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text animate-fadeInRight">
+                    <div class="hero-subtitle">
+                        <i class="fas fa-star"></i> <span>2025</span>
+                    </div>
+                    <h1 class="hero-title">Next-Gen AI Review Analysis</h1>
+                    <p class="hero-description">Harness the power of our advanced Multi-Interactive Attention Network Architecture to analyze and categorize product reviews with unprecedented accuracy.</p>
+                    
+                    <div class="hero-cta">
+                        <a href="#analyzer" class="btn btn-primary">
+                            <i class="fas fa-bolt"></i> Try It Now
+                        </a>
+                        <a href="/about" class="btn btn-outline">
+                            <i class="fas fa-info-circle"></i> Learn More
+                        </a>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ "{:.1%}".format(metrics.training_accuracy) }}</div>
+                            <div class="stat-label">Training Accuracy</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ "{:.1%}".format(metrics.validation_accuracy) }}</div>
+                            <div class="stat-label">Validation Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-image animate-fadeInLeft">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="AI Review Analysis" class="hero-img">
+                    
+                    <div class="floating-card floating-card-1">
+                        <div class="floating-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="floating-text">
+                            98.2% Accuracy
+                        </div>
+                    </div>
+                    
+                    <div class="floating-card floating-card-2">
+                        <div class="floating-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="floating-text">
+                            Real-time Analysis
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Key Features</div>
+                <h2 class="section-title">Why Choose SentimentMind AI?</h2>
+                <p class="section-description">Our cutting-edge technology offers unparalleled insights into customer reviews, helping businesses make data-driven decisions.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced Neural Architecture</h3>
+                    <p class="feature-description">Powered by our proprietary Multi-Interactive Attention Network Architecture (MIANA) that understands context and nuance in language.</p>
+                    <a href="/about" class="feature-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Real-time Processing</h3>
+                    <p class="feature-description">Get instant analysis results with our high-performance model that processes reviews in milliseconds.</p>
+                    <a href="/about" class="feature-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="feature-title">Comprehensive Insights</h3>
+                    <p class="feature-description">Receive detailed analysis with probability scores for multiple categories and sentiments.</p>
+                    <a href="/about" class="feature-link">
+                        Learn more <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Analyzer Section -->
+    <section class="analyzer" id="analyzer">
+        <div class="container">
+            <div class="analyzer-container">
+                <div class="analyzer-content">
+                    <h2 class="analyzer-title">Analyze Your Review</h2>
+                    <p class="analyzer-description">Enter your product review below and our AI will analyze the sentiment and categorize it in real-time.</p>
+                </div>
+                
+                <div class="analyzer-form">
+                    <form id="reviewForm">
+                        <div class="form-group">
+                            <label for="reviewText" class="form-label">Your Review:</label>
+                            <textarea id="reviewText" name="review" class="form-control" rows="6" placeholder="Type or paste your product review here..."></textarea>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Analyze Review
+                            </button>
+                            <button type="reset" class="btn btn-outline">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p class="loading-text">Our AI is analyzing your review...</p>
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage"></div>
+                    
+                    <div class="results" id="results">
+                        <div class="results-header">
+                            <h3 class="results-title">
+                                <i class="fas fa-chart-pie"></i> Analysis Results
+                            </h3>
+                            <div class="results-actions">
+                                <button class="btn-icon" id="copyResultsBtn" title="Copy Results">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon" id="newAnalysisBtn" title="New Analysis">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="predictionsContainer" class="prediction-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Call to Action -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-container">
+                <h2 class="cta-title">Ready to Explore More?</h2>
+                <p class="cta-description">Learn about the technology behind our SentimentMind AI model and discover how it can help you gain valuable insights from customer reviews.</p>
+                <div class="cta-buttons">
+                    <a href="/about" class="btn btn-primary">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">
+                        <i class="fas fa-brain logo-icon"></i>
+                        <span class="logo-text">SentimentMind AI</span>
+                    </a>
+                    <p class="footer-description">Harness the power of AI to analyze and categorize product reviews with our advanced Multi-Interactive Attention Network Architecture.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="/about">Model Architecture</a></li>
+                        <li><a href="/about">Performance Metrics</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="copyright">
+                    &copy; 2025 SentimentMind AI. All rights reserved.
+                </div>
+                <div class="footer-bottom-links">
+                    <a href="#" class="footer-bottom-link">Privacy Policy</a>
+                    <a href="#" class="footer-bottom-link">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+            
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.getElementById('navLinks');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('show');
+                
+                if (navLinks.classList.contains('show')) {
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+            
+            // Theme Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const themeIcon = themeToggle.querySelector('i');
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+                
+                if (body.classList.contains('dark-mode')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            // Review Form Submission
+            const reviewForm = document.getElementById('reviewForm');
+            const loadingElement = document.getElementById('loading');
+            const resultsElement = document.getElementById('results');
+            const predictionsContainer = document.getElementById('predictionsContainer');
+            const errorMessage = document.getElementById('errorMessage');
+            const newAnalysisBtn = document.getElementById('newAnalysisBtn');
+            const copyResultsBtn = document.getElementById('copyResultsBtn');
+            
+            reviewForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Hide previous results and errors
+                resultsElement.style.display = 'none';
+                errorMessage.style.display = 'none';
+                
+                // Show loading spinner
+                loadingElement.style.display = 'block';
+                
+                // Get form data
+                const formData = new FormData(reviewForm);
+                
+                // Send request to server
+                fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Server error occurred');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading spinner
+                    loadingElement.style.display = 'none';
+                    
+                    if (data.error) {
+                        // Show error message
+                        errorMessage.textContent = data.error;
+                        errorMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Clear previous results
+                    predictionsContainer.innerHTML = '';
+                    
+                    // Display predictions
+                    data.predictions.forEach((prediction, index) => {
+                        const predictionCard = document.createElement('div');
+                        predictionCard.className = 'prediction-card';
+                        
+                        const predictionHeader = document.createElement('div');
+                        predictionHeader.className = 'prediction-header';
+                        
+                        const labelElement = document.createElement('div');
+                        labelElement.className = 'prediction-label';
+                        labelElement.textContent = prediction.label;
+                        
+                        const percentageElement = document.createElement('div');
+                        percentageElement.className = 'prediction-percentage';
+                        percentageElement.textContent = (prediction.probability * 100).toFixed(1) + '%';
+                        
+                        predictionHeader.appendChild(labelElement);
+                        predictionHeader.appendChild(percentageElement);
+                        
+                        const barContainer = document.createElement('div');
+                        barContainer.className = 'prediction-bar-container';
+                        
+                        const bar = document.createElement('div');
+                        bar.className = 'prediction-bar';
+                        barContainer.appendChild(bar);
+                        
+                        // Get description based on probability
+                        let description = '';
+                        if (prediction.probability > 0.8) {
+                            description = 'Very high confidence in this classification.';
+                        } else if (prediction.probability > 0.6) {
+                            description = 'High confidence in this classification.';
+                        } else if (prediction.probability > 0.4) {
+                            description = 'Moderate confidence in this classification.';
+                        } else {
+                            description = 'Low confidence in this classification.';
+                        }
+                        
+                        const descriptionElement = document.createElement('div');
+                        descriptionElement.className = 'prediction-description';
+                        descriptionElement.textContent = description;
+                        
+                        predictionCard.appendChild(predictionHeader);
+                        predictionCard.appendChild(barContainer);
+                        predictionCard.appendChild(descriptionElement);
+                        
+                        predictionsContainer.appendChild(predictionCard);
+                        
+                        // Animate the bar width after a small delay
+                        setTimeout(() => {
+                            bar.style.width = (prediction.probability * 100) + '%';
+                        }, 100 * index);
+                    });
+                    
+                    // Show results
+                    resultsElement.style.display = 'block';
+                    
+                    // Scroll to results
+                    resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(error => {
+                    // Hide loading spinner
+                    loadingElement.style.display = 'none';
+                    
+                    // Show error message
+                    errorMessage.textContent = 'An error occurred: ' + error.message;
+                    errorMessage.style.display = 'block';
+                });
+            });
+            
+            // New analysis button
+            newAnalysisBtn.addEventListener('click', function() {
+                resultsElement.style.display = 'none';
+                reviewForm.reset();
+                document.getElementById('reviewText').focus();
+            });
+            
+            // Copy results button
+            copyResultsBtn.addEventListener('click', function() {
+                const predictions = [];
+                document.querySelectorAll('.prediction-card').forEach(card => {
+                    const label = card.querySelector('.prediction-label').textContent;
+                    const percentage = card.querySelector('.prediction-percentage').textContent;
+                    predictions.push(`${label}: ${percentage}`);
+                });
+                
+                const reviewText = document.getElementById('reviewText').value;
+                const textToCopy = `Review: ${reviewText}\n\nResults:\n${predictions.join('\n')}`;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // Show a temporary tooltip or notification
+                    const originalText = copyResultsBtn.innerHTML;
+                    copyResultsBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyResultsBtn.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+            
+            // Animate elements on scroll
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.feature-card, .section-header, .analyzer-content, .analyzer-form, .cta-container');
+                
+                elements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementPosition < windowHeight * 0.8) {
+                        element.classList.add('animate-fadeInUp');
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Run once on page load
+        });
+    </script>
+</body>
+</html>
